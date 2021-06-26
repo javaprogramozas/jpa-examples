@@ -45,6 +45,9 @@ public class User {
     */
     @Transient
     private Map<Integer, String> roles;
+    
+    @OneToOne(mappedBy = "user")
+    private Address address;
 
     public Long getId() {
         return id;
@@ -94,9 +97,22 @@ public class User {
         this.roles = roles;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        if (address != null) {
+            address.setUser(this);
+        } else {
+            this.address.setUser(null);
+        }
+        this.address = address;
+    }
+
     @Override
     public String toString() {
-        return "User [id=" + id + ", username=" + username + "]";
+        return "User [id=" + id + ", username=" + username + ", address=" + address + "]";
     }
 
 }

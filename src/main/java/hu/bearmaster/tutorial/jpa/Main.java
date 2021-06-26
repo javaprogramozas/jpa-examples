@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         Main main = new Main();
-        main.createAddressWithAssociation();
+        main.getAddress();
     }
 
     private void createAddress() {
@@ -25,12 +25,33 @@ public class Main {
     
     private void associateAddressToUser() {
         User user = userDao.getUserById(1L);
-        Address address = addressDao.getAddressById(14L);
+        Address address = addressDao.getAddressById(15L);
         System.out.println(address);
         
         address.setUser(user);
         addressDao.update(address);
         System.out.println(address);
+    }
+    
+    private void associateUserToAddress() {
+        User user = userDao.getUserById(1L);
+        Address address = addressDao.getAddressById(15L);
+        System.out.println(user);
+        
+        user.setAddress(address);
+        addressDao.update(user.getAddress());
+        System.out.println(user);
+    }
+    
+    private void getUser() {
+        User user = userDao.getUserById(1L);
+        System.out.println(user);
+    }
+    
+    private void getAddress() {
+        Address address = addressDao.getAddressById(15L);
+        System.out.println(address);
+        System.out.println(address.getUser());
     }
     
     private void dissociateAddressFromUser() {

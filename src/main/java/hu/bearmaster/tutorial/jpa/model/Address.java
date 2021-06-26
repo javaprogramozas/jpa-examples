@@ -1,5 +1,7 @@
 package hu.bearmaster.tutorial.jpa.model;
 
+import java.util.Optional;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -82,7 +84,7 @@ public class Address {
     @Override
     public String toString() {
         return "Address [id=" + id + ", city=" + city + ", street=" + street + ", houseNumber=" + houseNumber
-                + ", user=" + user + "]";
+                + ", userId=" + Optional.ofNullable(user).map(User::getId).orElse(null) + "]";
     }
 
     public static Address address(String city, String street, int houseNumber) {
