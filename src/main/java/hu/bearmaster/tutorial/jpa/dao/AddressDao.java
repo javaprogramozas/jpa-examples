@@ -1,7 +1,5 @@
 package hu.bearmaster.tutorial.jpa.dao;
 
-import javax.persistence.EntityManager;
-
 import hu.bearmaster.tutorial.jpa.model.Address;
 
 public class AddressDao extends AbstractDao<Address, Long> {
@@ -11,8 +9,7 @@ public class AddressDao extends AbstractDao<Address, Long> {
     }
     
     public Address getAddressById(Long id) {
-        EntityManager entityManager = getEntityManagerFactory().createEntityManager();
-        return entityManager.find(Address.class, id);
+        return getById(id);
     }
     
     public Address create(Address address) {
@@ -32,6 +29,11 @@ public class AddressDao extends AbstractDao<Address, Long> {
             entityManager.remove(reference);
             return null;
         });
+    }
+
+    @Override
+    protected Class<Address> getEntityClass() {
+        return Address.class;
     }
 
 }

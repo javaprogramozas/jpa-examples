@@ -23,6 +23,13 @@ public abstract class AbstractDao<T, ID> {
         return emf;
     }
     
+    protected abstract Class<T> getEntityClass();
+    
+    protected T getById(ID id) {
+        EntityManager entityManager = emf.createEntityManager();
+        return entityManager.find(getEntityClass(), id);
+    }
+    
     protected T runInTransaction(Function<EntityManager, T> function) {
         EntityManager entityManager = null;
         EntityTransaction transaction = null;

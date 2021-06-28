@@ -1,18 +1,19 @@
 package hu.bearmaster.tutorial.jpa.model;
 
 import java.time.ZonedDateTime;
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -37,17 +38,9 @@ public class User {
     @Transient
     private boolean loggedIn;
     
-    /*
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", schema = "blogs", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role_name")
-    @MapKeyColumn(name = "ordinal")
-    */
-    @Transient
-    private Map<Integer, String> roles;
-    
-    @OneToOne(mappedBy = "user")
-    private Address address;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "author_id")
+    private List<Post> posts;
 
     public Long getId() {
         return id;
@@ -89,30 +82,16 @@ public class User {
         this.loggedIn = loggedIn;
     }
 
-    public Map<Integer, String> getRoles() {
-        return roles;
+    public List<Post> getPosts() {
+        return posts;
     }
 
-    public void setRoles(Map<Integer, String> roles) {
-        this.roles = roles;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        if (address != null) {
-            address.setUser(this);
-        } else {
-            this.address.setUser(null);
-        }
-        this.address = address;
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", username=" + username + ", address=" + address + "]";
+        return "User [id=" + id + ", username=" + username + ", posts=" + posts + "]";
     }
-
 }
