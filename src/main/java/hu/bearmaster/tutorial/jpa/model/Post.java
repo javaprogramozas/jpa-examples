@@ -3,6 +3,7 @@ package hu.bearmaster.tutorial.jpa.model;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,11 +35,9 @@ public class Post {
 
     private String slug;
     
-    /*
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User author;
-    */
 
     public Post() {}
     
@@ -98,9 +97,22 @@ public class Post {
         this.slug = slug;
     }
 
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        if (author != null) {
+            author.getPosts().add(this);
+        } else {
+            this.author.getPosts().remove(this);
+        }
+        this.author = author;
+    }
+
     @Override
     public String toString() {
-        return "Post [id=" + id + ", title=" + title + "]";
+        return "Post [id=" + id + ", title=" + title + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
     }
 
     public static Post post(String title, String description) {

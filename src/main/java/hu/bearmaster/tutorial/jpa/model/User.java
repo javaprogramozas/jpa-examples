@@ -38,8 +38,7 @@ public class User {
     @Transient
     private boolean loggedIn;
     
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "author_id")
+    @OneToMany(mappedBy = "author")
     private List<Post> posts;
 
     public Long getId() {
@@ -89,6 +88,19 @@ public class User {
     public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
+    
+    /*
+    public void addPost(Post post) {
+        post.setAuthor(this);
+        this.posts.add(post);
+    }
+    
+    public void removePost(Post post) {
+        if (this.posts.remove(post)) {
+            post.setAuthor(null);
+        }
+    }
+    */
 
     @Override
     public String toString() {

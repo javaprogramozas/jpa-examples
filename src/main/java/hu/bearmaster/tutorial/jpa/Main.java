@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         Main main = new Main();
-        main.disassociatePostFromUser();
+        main.associatePostToUser();
     }
     
     private void createPost() {
@@ -38,11 +38,11 @@ public class Main {
     
     private void associatePostToUser() {
         User user = userDao.getUserById(1L);
-        Post post = Post.post("Ez nem fog működni", "Ide jön a leírás");
+        Post post = postDao.getPostById(12L);
         System.out.println(user);
         
-        user.getPosts().add(post);
-        userDao.update(user);
+        post.setAuthor(user);
+        postDao.update(post);
         System.out.println(user);
     }
     
