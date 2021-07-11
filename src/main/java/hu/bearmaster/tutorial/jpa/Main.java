@@ -41,7 +41,7 @@ public class Main {
         Post post = postDao.getPostById(12L);
         System.out.println(user);
         
-        post.setAuthor(user);
+        post.addAuthor(user);
         postDao.update(post);
         System.out.println(user);
     }

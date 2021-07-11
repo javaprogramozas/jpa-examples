@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -38,8 +39,8 @@ public class User {
     @Transient
     private boolean loggedIn;
     
-    @OneToMany(mappedBy = "author")
-    private List<Post> posts;
+    @ManyToMany(mappedBy = "authors")
+    private Set<Post> posts;
 
     public Long getId() {
         return id;
@@ -81,11 +82,11 @@ public class User {
         this.loggedIn = loggedIn;
     }
 
-    public List<Post> getPosts() {
+    public Set<Post> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<Post> posts) {
+    public void setPosts(Set<Post> posts) {
         this.posts = posts;
     }
     

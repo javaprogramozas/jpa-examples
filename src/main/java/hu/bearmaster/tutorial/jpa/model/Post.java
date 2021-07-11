@@ -4,6 +4,8 @@ import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -35,9 +39,11 @@ public class Post {
 
     private String slug;
     
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
+    @ManyToMany
+    @JoinTable(name = "author_posts", schema = "blogs", 
+        joinColumns = @JoinColumn(name = "post_id"), 
+        inverseJoinColumns = @JoinColumn(name = "author_id"))
+    private Set<User> authors;
 
     public Post() {}
     
@@ -97,22 +103,28 @@ public class Post {
         this.slug = slug;
     }
 
-    public User getAuthor() {
-        return author;
+    public Set<User> getAuthors() {
+        return authors;
     }
 
-    public void setAuthor(User author) {
-        if (author != null) {
-            author.getPosts().add(this);
-        } else {
-            this.author.getPosts().remove(this);
-        }
-        this.author = author;
+    public void setAuthors(Set<User> authors) {
+        this.authors = authors;
+    }
+    
+    public void addAuthor(User author) {
+        this.authors.add(author);
+        author.getPosts().add(this);
+    }
+    
+    public void removeAuthor(User author) {
+        this.authors.remove(author);
+        author.getPosts().remove(this);
     }
 
     @Override
     public String toString() {
-        return "Post [id=" + id + ", title=" + title + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
+        Set<String> authorIds = this.authors.stream().map(author -> author.getId().toString()).collect(Collectors.toSet());
+        return "Post [id=" + id + ", title=" + title + ", authorIds=" + authorIds + "]";
     }
 
     public static Post post(String title, String description) {
