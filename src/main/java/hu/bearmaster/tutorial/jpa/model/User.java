@@ -1,19 +1,15 @@
 package hu.bearmaster.tutorial.jpa.model;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -39,8 +35,17 @@ public class User {
     @Transient
     private boolean loggedIn;
     
-    @ManyToMany(mappedBy = "authors")
+    @OneToMany(mappedBy = "author")
     private Set<Post> posts;
+    
+    public User() {
+    }
+
+    public User(String username, UserStatus status, ZonedDateTime createdAt) {
+        this.username = username;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
 
     public Long getId() {
         return id;
@@ -89,22 +94,14 @@ public class User {
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
     }
-    
-    /*
-    public void addPost(Post post) {
-        post.setAuthor(this);
-        this.posts.add(post);
-    }
-    
-    public void removePost(Post post) {
-        if (this.posts.remove(post)) {
-            post.setAuthor(null);
-        }
-    }
-    */
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", username=" + username + ", posts=" + posts + "]";
+        String objectId = Integer.toHexString(System.identityHashCode(this));
+        return "User@" + objectId + " [id=" + id + ", username=" + username + ", status=" + status + "]";
+    }
+    
+    public static User user(String username) {
+        return new User(username, UserStatus.PENDING, ZonedDateTime.now());
     }
 }

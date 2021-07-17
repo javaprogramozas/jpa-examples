@@ -39,11 +39,9 @@ public class Post {
 
     private String slug;
     
-    @ManyToMany
-    @JoinTable(name = "author_posts", schema = "blogs", 
-        joinColumns = @JoinColumn(name = "post_id"), 
-        inverseJoinColumns = @JoinColumn(name = "author_id"))
-    private Set<User> authors;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
 
     public Post() {}
     
@@ -103,28 +101,28 @@ public class Post {
         this.slug = slug;
     }
 
-    public Set<User> getAuthors() {
-        return authors;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setAuthors(Set<User> authors) {
-        this.authors = authors;
+    public void setAuthor(User author) {
+        if (this.author != null) {
+            removeAuthor();
+        }
+        if (author != null) {
+            this.author = author;
+            author.getPosts().add(this);
+        }
     }
     
-    public void addAuthor(User author) {
-        this.authors.add(author);
-        author.getPosts().add(this);
-    }
-    
-    public void removeAuthor(User author) {
-        this.authors.remove(author);
-        author.getPosts().remove(this);
+    private void removeAuthor() {
+        this.author.getPosts().remove(this);
+        this.author = null;
     }
 
     @Override
     public String toString() {
-        Set<String> authorIds = this.authors.stream().map(author -> author.getId().toString()).collect(Collectors.toSet());
-        return "Post [id=" + id + ", title=" + title + ", authorIds=" + authorIds + "]";
+        return "Post [id=" + id + ", title=" + title + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
     }
 
     public static Post post(String title, String description) {

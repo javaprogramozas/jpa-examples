@@ -5,7 +5,6 @@
         version="2.2">
     <persistence-unit name="blogs-pu">
         <class>hu.bearmaster.tutorial.jpa.model.User</class>
-        <class>hu.bearmaster.tutorial.jpa.model.IdCard</class>
         
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres" />
