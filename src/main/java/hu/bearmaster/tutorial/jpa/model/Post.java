@@ -4,17 +4,14 @@ import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -39,7 +36,7 @@ public class Post {
 
     private String slug;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author;
 
@@ -106,23 +103,12 @@ public class Post {
     }
 
     public void setAuthor(User author) {
-        if (this.author != null) {
-            removeAuthor();
-        }
-        if (author != null) {
-            this.author = author;
-            author.getPosts().add(this);
-        }
-    }
-    
-    private void removeAuthor() {
-        this.author.getPosts().remove(this);
-        this.author = null;
+        this.author = author;
     }
 
     @Override
     public String toString() {
-        return "Post [id=" + id + ", title=" + title + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
+        return "Post [id=" + id + ", title=" + title + ", likes=" + likes + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
     }
 
     public static Post post(String title, String description) {

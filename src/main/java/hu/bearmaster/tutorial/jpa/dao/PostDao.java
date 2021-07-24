@@ -25,7 +25,7 @@ public class PostDao extends AbstractDao<Post, Long> {
     
     public void remove(Post post) {
         runInTransaction(entityManager -> {
-            Post reference = entityManager.find(Post.class, post.getId());
+            Post reference = entityManager.getReference(Post.class, post.getId());
             entityManager.remove(reference);
             return null;
         });

@@ -17,6 +17,74 @@ public class Main {
     private final PostDao postDao = new PostDao();
 
     public static void main(String[] args) {
+        Main main = new Main();
+        main.findPost();
+    }
+        
+    
+    private void createPost() {
+        Post post = Post.post("Ez egy teszt", "Ide jön a leírás");
+        
+        Post savedPost = postDao.create(post);
+        
+        System.out.println(savedPost);
+    }
+
+    private void findPost() {
+        Post post = postDao.getPostById(8L);
+        
+        System.out.println(post);
+        /*
+        Post postWithAuthor = postDao.runInTransaction(entityManager -> {
+            User user = entityManager.find(User.class, post.getAuthor().getId());
+            post.setAuthor(user);
+            return post;
+        });
+        */
+        System.out.println(post.getAuthor().getId());
+        User author = userDao.getUserById(post.getAuthor().getId());
+        System.out.println(author);
+    }
+    
+    private void findUser() {
+        User user = userDao.getUserById(1L);
+        
+        System.out.println(user);
+        System.out.println(user.getPosts());
+    }
+    
+    
+    private void associatePostToUser() {
+        User user = userDao.getUserById(1L);
+        Post post = postDao.getPostById(12L);
+        System.out.println(user);
+        
+        post.setAuthor(user);
+        postDao.update(post);
+        System.out.println(user);
+    }
+    
+    
+    private void disassociatePostFromUser() {
+        User user = userDao.getUserById(1L);
+        System.out.println(user);
+        
+        user.getPosts().remove(0);
+        userDao.update(user);
+        System.out.println(user);
+    }
+    
+    /*
+    private void deletePost() {
+        Post post = postDao.getPostById(24L);
+        
+        System.out.println(post);
+        
+        postDao.remove(post);
+    }
+    */
+    
+    private void persistentContext() {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("blogs-pu");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         
@@ -61,59 +129,5 @@ public class Main {
         transaction.begin();
         anotherUser.setStatus(UserStatus.PENDING);
         transaction.commit();
-        
-        
     }
-        
-    
-    private void createPost() {
-        Post post = Post.post("Ez egy teszt", "Ide jön a leírás");
-        
-        Post savedPost = postDao.create(post);
-        
-        System.out.println(savedPost);
-    }
-
-    private void findPost() {
-        Post post = postDao.getPostById(8L);
-        
-        System.out.println(post);
-    }
-    
-    private void findUser() {
-        User user = userDao.getUserById(1L);
-        
-        System.out.println(user);
-    }
-    
-    
-    private void associatePostToUser() {
-        User user = userDao.getUserById(1L);
-        Post post = postDao.getPostById(12L);
-        System.out.println(user);
-        
-        post.setAuthor(user);
-        postDao.update(post);
-        System.out.println(user);
-    }
-    
-    
-    private void disassociatePostFromUser() {
-        User user = userDao.getUserById(1L);
-        System.out.println(user);
-        
-        user.getPosts().remove(0);
-        userDao.update(user);
-        System.out.println(user);
-    }
-    
-    /*
-    private void deletePost() {
-        Post post = postDao.getPostById(24L);
-        
-        System.out.println(post);
-        
-        postDao.remove(post);
-    }
-    */
 }

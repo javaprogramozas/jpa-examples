@@ -1,12 +1,15 @@
 package hu.bearmaster.tutorial.jpa.model;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,8 +38,8 @@ public class User {
     @Transient
     private boolean loggedIn;
     
-    @OneToMany(mappedBy = "author")
-    private Set<Post> posts;
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Post> posts = new HashSet<>();
     
     public User() {
     }
