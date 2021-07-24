@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -38,8 +39,11 @@ public class User {
     @Transient
     private boolean loggedIn;
     
-    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author")
     private Set<Post> posts = new HashSet<>();
+    
+    @OneToOne(mappedBy = "user")
+    private Address address;
     
     public User() {
     }
@@ -97,13 +101,12 @@ public class User {
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
     }
-
+    
     @Override
     public String toString() {
-        String objectId = Integer.toHexString(System.identityHashCode(this));
-        return "User@" + objectId + " [id=" + id + ", username=" + username + ", status=" + status + "]";
+        return "User [id=" + id + ", username=" + username + "]";
     }
-    
+
     public static User user(String username) {
         return new User(username, UserStatus.PENDING, ZonedDateTime.now());
     }

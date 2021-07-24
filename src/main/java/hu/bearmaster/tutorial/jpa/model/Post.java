@@ -39,15 +39,18 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author;
+    
+    private String topic;
 
     public Post() {}
     
-    public Post(String title, String description, ZonedDateTime createdOn, int likes, String slug) {
+    public Post(String title, String description, ZonedDateTime createdOn, int likes, String slug, String topic) {
         this.title = title;
         this.description = description;
         this.createdOn = createdOn;
         this.likes = likes;
         this.slug = slug;
+        this.topic = topic;
     }
 
     public Long getId() {
@@ -106,9 +109,18 @@ public class Post {
         this.author = author;
     }
 
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
     @Override
     public String toString() {
-        return "Post [id=" + id + ", title=" + title + ", likes=" + likes + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
+        return "Post [id=" + id + ", title=" + title + ", likes=" + likes + ", topic=" + topic 
+                + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
     }
 
     public static Post post(String title, String description) {
@@ -116,7 +128,7 @@ public class Post {
                 .replaceAll("[\\p{InCombiningDiacriticalMarks},\\p{Punct}]+", "")
                 .toLowerCase()
                 .replace(' ', '-');
-        return new Post(title, description, ZonedDateTime.now(), 0, slug);
+        return new Post(title, description, ZonedDateTime.now(), 0, slug, "teszt");
     }
 
 }
