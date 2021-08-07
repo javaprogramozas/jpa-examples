@@ -1,5 +1,6 @@
 package hu.bearmaster.tutorial.jpa;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,15 +10,17 @@ import javax.persistence.Persistence;
 import org.junit.jupiter.api.Test;
 
 import hu.bearmaster.tutorial.jpa.model.Post;
+import hu.bearmaster.tutorial.jpa.model.TitleAndLike;
+import hu.bearmaster.tutorial.jpa.model.User;
 
-public class SimpleJpqlQueries {
+class SimpleJpqlQueries {
     
     private EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("blogs-pu");
     private EntityManager entityManager = entityManagerFactory.createEntityManager();
 
     @Test
     void basicQuery() {
-        List<Post> posts = entityManager.createQuery("").getResultList();
+        List<Post> posts = entityManager.createQuery("FROM Post", Post.class).getResultList();
         
         System.out.println(posts);
     }
@@ -35,9 +38,10 @@ public class SimpleJpqlQueries {
     @Test
     void basicQueryWithSelect() {
         String query = """
+                SELECT p.createdOn
                 FROM Post p
                 """;
-        List titles = entityManager.createQuery(query).getResultList();
+        List<ZonedDateTime> titles = entityManager.createQuery(query, ZonedDateTime.class).getResultList();
         
         System.out.println(titles);
     }
@@ -46,7 +50,10 @@ public class SimpleJpqlQueries {
     void queryWithWhereAndOrderBy() {
         String query = """
                 SELECT p
-                From Post p
+                FROM Post p
+                WHERE p.likes > 10
+                AND p.title LIKE '%méz%'
+                ORDER BY p.id DESC
                 """;
         List<Post> posts = entityManager.createQuery(query, Post.class).getResultList();
         
@@ -56,22 +63,29 @@ public class SimpleJpqlQueries {
     @Test
     void queryWithAggregateFunctions() {
         String query = """
-                SELECT p
+                SELECT MAX(p.likes)
                 FROM Post p
                 """;
         
-        List posts = entityManager.createQuery(query).getResultList();
+        Integer maxLikes = entityManager.createQuery(query, Integer.class).getSingleResult();
         
-        System.out.println(posts);
+        System.out.println("Maximum like number: " + maxLikes);
     }
+    
+    // -------------------------------------------
     
     @Test
     void queryWithNamedParameters() {
         String query = """
                 SELECT p
                 FROM Post p
+                WHERE p.likes > :likes
+                AND LOCATE(:word, p.title) > 0 
+                ORDER BY p.id DESC
                 """;
         List<Post> posts = entityManager.createQuery(query, Post.class)
+                .setParameter("likes", 10)
+                .setParameter("word", "méz")
                 .getResultList();
         
         System.out.println(posts);
@@ -82,8 +96,13 @@ public class SimpleJpqlQueries {
         String query = """
                 SELECT p
                 FROM Post p
+                WHERE p.likes > ?1
+                AND LOCATE(?2, p.title) > 0 
+                ORDER BY p.id DESC
                 """;
         List<Post> posts = entityManager.createQuery(query, Post.class)
+                .setParameter(1, 10)
+                .setParameter(2, "méz")
                 .getResultList();
         
         System.out.println(posts);
@@ -94,8 +113,12 @@ public class SimpleJpqlQueries {
         String query = """
                 SELECT p
                 FROM Post p
+                WHERE LOCATE(:word, p.description) > 0
+                AND LOCATE(:word, p.title) > 0 
+                ORDER BY p.id DESC
                 """;
         List<Post> posts = entityManager.createQuery(query, Post.class)
+                .setParameter("word", "Az")
                 .getResultList();
         
         System.out.println(posts);
@@ -104,21 +127,21 @@ public class SimpleJpqlQueries {
     @Test
     void queryWithCustomReturnType() {
         String query = """
-                SELECT p
+                SELECT p.title, p.likes
                 FROM Post p
                 """;
-        List posts = entityManager.createQuery(query).getResultList();
+        List<Object[]> posts = entityManager.createQuery(query, Object[].class).getResultList();
         
-        System.out.println(posts);
+        posts.forEach(array -> System.out.println("'" + array[0] + "' bejegyzésnek " + array[1] + " like-ja van"));
     }
     
     @Test
     void queryWithCustomReturnTypeInEnclosingClass() {
         String query = """
-                SELECT p.title, p.likes
+                SELECT new hu.bearmaster.tutorial.jpa.model.TitleAndLike(p.title, p.likes)
                 FROM Post p
                 """;
-        List posts = entityManager.createQuery(query).getResultList();
+        List<TitleAndLike> posts = entityManager.createQuery(query, TitleAndLike.class).getResultList();
         
         System.out.println(posts);
     }
@@ -126,8 +149,10 @@ public class SimpleJpqlQueries {
     @Test
     void queryWithGroupByAndHaving() {
         String query = """
-                SELECT p
+                SELECT p.topic, SUM(p.likes)
                 FROM Post p
+                GROUP BY p.topic
+                HAVING LENGTH(p.topic) > 5
                 """;
         List<Object[]> results = entityManager.createQuery(query, Object[].class).getResultList();
         
