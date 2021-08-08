@@ -13,12 +13,35 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "posts", schema = "blogs")
 @SequenceGenerator(name = "postIdGenerator", sequenceName = "posts_seq", schema = "blogs", initialValue = 1, allocationSize = 1)
+@NamedQueries({
+    @NamedQuery(name = "selectPostsByLikesAndTitle", 
+            query = """
+                    SELECT p
+                    FROM Post p
+                    WHERE p.likes > :likes
+                    AND LOCATE(:word, p.title) > 0 
+                    ORDER BY p.id DESC
+                    """)
+})
+@NamedNativeQueries({
+    @NamedNativeQuery(name = "usersWithPalindromName",
+            resultClass = User.class,
+            query = """
+                    SELECT u.id, u.username, u.status, u.created_at
+                    FROM blogs.users u
+                    WHERE lower(u.username) = reverse(lower(u.username)) 
+                    """)
+})
 public class Post {
 
     @Id
