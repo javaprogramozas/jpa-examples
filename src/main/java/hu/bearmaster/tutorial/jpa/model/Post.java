@@ -3,7 +3,8 @@ package hu.bearmaster.tutorial.jpa.model;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.time.ZonedDateTime;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,12 +14,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "posts", schema = "blogs")
@@ -42,6 +48,11 @@ import javax.persistence.Table;
                     WHERE lower(u.username) = reverse(lower(u.username)) 
                     """)
 })
+@NamedEntityGraphs({
+    @NamedEntityGraph(name = "postWithAuthor", attributeNodes = {
+            @NamedAttributeNode("author")
+    })
+})
 public class Post {
 
     @Id
@@ -62,8 +73,14 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author;
-    
+
     private String topic;
+    
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comments = new HashSet<>();
+    
+    @Version
+    private int version;
 
     public Post() {}
     
@@ -142,8 +159,7 @@ public class Post {
 
     @Override
     public String toString() {
-        return "Post [id=" + id + ", title=" + title + ", likes=" + likes + ", topic=" + topic 
-                + ", authorId=" + Optional.ofNullable(author).map(User::getId).orElse(null) + "]";
+        return String.format("%d. '%s' (%d likes)", id, title, likes);
     }
 
     public static Post post(String title, String description) {

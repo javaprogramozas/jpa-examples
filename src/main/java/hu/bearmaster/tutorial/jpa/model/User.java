@@ -15,12 +15,36 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+@NamedEntityGraphs({
+    @NamedEntityGraph(name = "userWithPosts", attributeNodes = @NamedAttributeNode("posts")),
+    @NamedEntityGraph(
+            name = "userWithPostsAndRoles", 
+            attributeNodes = {
+                @NamedAttributeNode("posts"),
+                @NamedAttributeNode("roles")
+            }
+    ),
+    @NamedEntityGraph(
+            name = "userWithPostsAndComments", 
+            attributeNodes = {
+                    @NamedAttributeNode(value = "posts", subgraph = "postComments"),
+            },
+            subgraphs = @NamedSubgraph(
+                    name = "postComments", 
+                    attributeNodes = @NamedAttributeNode("comments")
+            )
+    )
+})
 @Entity
 @Table(name = "users", schema = "blogs")
 @SequenceGenerator(name = "userIdGenerator", sequenceName = "users_seq", schema = "blogs", initialValue = 1, allocationSize = 1)
@@ -47,7 +71,7 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Address address;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", schema = "blogs", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role_name")
     private Set<String> roles = new HashSet<>();
