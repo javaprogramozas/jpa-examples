@@ -94,7 +94,7 @@ class EntityRelationshipJpql {
                 FROM Post p
                 JOIN p.author u
                 WHERE p.likes > 5
-                AND u.status = 'ACTIVE'
+                AND u.status = hu.bearmaster.tutorial.jpa.model.UserStatus.ACTIVE
                 """;
         
         List<Post> posts = entityManager.createQuery(query, Post.class).getResultList();
@@ -110,7 +110,7 @@ class EntityRelationshipJpql {
                 FROM Post p
                 JOIN FETCH p.author u
                 WHERE p.likes > 5
-                AND u.status = 'ACTIVE'
+                AND u.status = hu.bearmaster.tutorial.jpa.model.UserStatus.ACTIVE
                 """;
         
         List<Post> posts = entityManager.createQuery(query, Post.class).getResultList();

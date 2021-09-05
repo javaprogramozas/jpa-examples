@@ -1,6 +1,6 @@
 package hu.bearmaster.tutorial.jpa.model;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,7 +61,7 @@ public class User {
     private UserStatus status;
 
     @Column(name = "created_at")
-    private ZonedDateTime createdAt;
+    private OffsetDateTime createdAt;
     
     @Transient
     private boolean loggedIn;
@@ -80,7 +80,7 @@ public class User {
     public User() {
     }
 
-    public User(String username, UserStatus status, ZonedDateTime createdAt) {
+    public User(String username, UserStatus status, OffsetDateTime createdAt) {
         this.username = username;
         this.status = status;
         this.createdAt = createdAt;
@@ -110,11 +110,11 @@ public class User {
         this.status = status;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(ZonedDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -148,6 +148,6 @@ public class User {
     }
 
     public static User user(String username) {
-        return new User(username, UserStatus.PENDING, ZonedDateTime.now());
+        return new User(username, UserStatus.PENDING, OffsetDateTime.now());
     }
 }

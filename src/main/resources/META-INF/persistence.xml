@@ -4,7 +4,7 @@
                             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
         version="2.2">
     <persistence-unit name="blogs-pu">
-        <class>hu.bearmaster.tutorial.jpa.model.User</class>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres" />
@@ -14,20 +14,6 @@
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.format_sql" value="true" />
             <property name="eclipselink.logging.level.sql" value="FINE"/>
-        </properties>
-    </persistence-unit>
-    
-    <persistence-unit name="misc-pu">
-        <class>hu.bearmaster.tutorial.jpa.model.Card</class>
-        
-        <properties>
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres" />
-            <property name="javax.persistence.jdbc.user" value="blogadmin" />
-            <property name="javax.persistence.jdbc.password" value="blog1234" />
-
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.format_sql" value="true" />
-            <property name="hibernate.default_schema" value="misc"/>
         </properties>
     </persistence-unit>
 </persistence>

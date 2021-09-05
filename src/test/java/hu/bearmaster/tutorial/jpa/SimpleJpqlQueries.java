@@ -20,7 +20,7 @@ class SimpleJpqlQueries {
 
     @Test
     void basicQuery() {
-        List<Post> posts = entityManager.createQuery("FROM Post", Post.class).getResultList();
+        List<Post> posts = entityManager.createQuery("FROM Post p", Post.class).getResultList();
         
         System.out.println(posts);
     }

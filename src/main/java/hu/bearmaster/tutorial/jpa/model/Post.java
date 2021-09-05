@@ -2,7 +2,7 @@ package hu.bearmaster.tutorial.jpa.model;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,7 +71,7 @@ public class Post {
     private String description;
 
     @Column(name = "created_on")
-    private ZonedDateTime createdOn;
+    private OffsetDateTime createdOn;
 
     private int likes;
 
@@ -92,7 +92,7 @@ public class Post {
 
     public Post() {}
     
-    public Post(String title, String description, ZonedDateTime createdOn, int likes, String slug, String topic) {
+    public Post(String title, String description, OffsetDateTime createdOn, int likes, String slug, String topic) {
         this.title = title;
         this.description = description;
         this.createdOn = createdOn;
@@ -125,11 +125,11 @@ public class Post {
         this.description = description;
     }
 
-    public ZonedDateTime getCreatedOn() {
+    public OffsetDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(ZonedDateTime createdOn) {
+    public void setCreatedOn(OffsetDateTime createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -175,7 +175,7 @@ public class Post {
                 .replaceAll("[\\p{InCombiningDiacriticalMarks},\\p{Punct}]+", "")
                 .toLowerCase()
                 .replace(' ', '-');
-        return new Post(title, description, ZonedDateTime.now(), 0, slug, "teszt");
+        return new Post(title, description, OffsetDateTime.now(), 0, slug, "teszt");
     }
 
 }

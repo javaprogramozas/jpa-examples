@@ -9,6 +9,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import hu.bearmaster.tutorial.jpa.model.Post;
@@ -49,6 +50,7 @@ class DmlWithJpql {
         transaction.rollback();
     }
     
+    @Disabled("https://bugs.eclipse.org/bugs/show_bug.cgi?id=444610")
     @Test
     void updateRelation() {
         // Update posts without author
@@ -107,7 +109,13 @@ class DmlWithJpql {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         
-        int affectedRows = entityManager.createQuery("UPDATE User u SET u.status = 'INACTIVE' WHERE u.posts IS EMPTY").executeUpdate();
+        int affectedRows = entityManager
+                .createQuery("""
+                        UPDATE User u 
+                        SET u.status = hu.bearmaster.tutorial.jpa.model.UserStatus.INACTIVE 
+                        WHERE u.posts IS EMPTY
+                        """)
+                .executeUpdate();
         
         System.out.println("Updated " + affectedRows + " records");
         
@@ -120,7 +128,8 @@ class DmlWithJpql {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         
-        int affectedRows = entityManager.createQuery("DELETE User u WHERE u.status = 'INACTIVE'").executeUpdate();
+        int affectedRows = entityManager.createQuery("DELETE FROM User u WHERE u.status = hu.bearmaster.tutorial.jpa.model.UserStatus.INACTIVE")
+                .executeUpdate();
         
         System.out.println("Removed " + affectedRows + " records");
         
@@ -143,10 +152,10 @@ class DmlWithJpql {
                 SELECT u.id, u.username, u.status, u.created_at
                 FROM blogs.users u
                 WHERE lower(u.username) = reverse(lower(u.username)) 
-                AND u.status = :status
+                AND u.status = ?1
                 """;
         List<User> palindromUsers = entityManager.createNativeQuery(query, User.class)
-                .setParameter("status", UserStatus.ACTIVE.name())
+                .setParameter(1, UserStatus.ACTIVE.name())
                 .getResultList();
         
         System.out.println(palindromUsers);
@@ -158,10 +167,10 @@ class DmlWithJpql {
                 SELECT u.id, u.username, u.status, u.created_at
                 FROM blogs.users u
                 WHERE lower(u.username) = reverse(lower(u.username)) 
-                AND u.status = :status
+                AND u.status = ?1
                 """;
         List<Object[]> users = entityManager.createNativeQuery(query)
-                .setParameter("status", UserStatus.ACTIVE.name())
+                .setParameter(1, UserStatus.ACTIVE.name())
                 .getResultList();
         
         users.forEach(array -> System.out.println(Arrays.toString(array)));

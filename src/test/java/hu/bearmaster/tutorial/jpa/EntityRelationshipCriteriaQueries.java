@@ -118,30 +118,6 @@ class EntityRelationshipCriteriaQueries {
     }
     
     @Test
-    void fetchJoinWithDynamicEntityGraph() {
-        // Posts with 5+ likes and active authors
-        // SELECT p FROM Post p JOIN FETCH p.author u WHERE p.likes > 5 AND u.status = 'ACTIVE'
-        
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Post> query = builder.createQuery(Post.class);
-        Root<Post> post = query.from(Post.class);
-        Join<Post, User> author = post.join("author");
-        EntityGraph<Post> fetchGraph = entityManager.createEntityGraph(Post.class);
-        fetchGraph.addSubgraph("author", User.class);
-        
-        query.select(post);
-        query.where(builder.gt(post.get("likes"), 5), builder.equal(author.get("status"), UserStatus.ACTIVE));
-        
-        List<Post> posts = entityManager.createQuery(query)
-                .setHint("javax.persistence.loadgraph", fetchGraph)
-                .getResultList();
-        
-        for (Post p : posts) {
-            System.out.println(p.getTitle() + " from " + p.getAuthor().getUsername());
-        }
-    }
-    
-    @Test
     void leftJoin() {
         // Posts with 5+ likes regardless having an author
         // FROM Post p LEFT OUTER JOIN FETCH p.author u WHERE p.likes > 5

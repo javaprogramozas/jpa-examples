@@ -12,6 +12,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import hu.bearmaster.tutorial.jpa.model.Post;
@@ -53,19 +54,19 @@ class DmlWithCriteriaQueries {
         CriteriaUpdate<Post> update = builder.createCriteriaUpdate(Post.class);
         Root<Post> post = update.from(Post.class);
         
-        ParameterExpression<Integer> likesParameter = builder.parameter(Integer.class, "majom");
-        ParameterExpression<String> topicParameter = builder.parameter(String.class, "ketrec");
+        //ParameterExpression<Integer> likesParameter = builder.parameter(Integer.class, "majom");
+        //ParameterExpression<String> topicParameter = builder.parameter(String.class, "ketrec");
         
         Path<Integer> likes = post.get("likes");
-        update.set(likes, likesParameter);
-        update.where(builder.equal(post.get("topic"), topicParameter));
+        update.set(likes, 10);
+        update.where(builder.equal(post.get("topic"), "Vicces"));
         
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         
         int affectedRows = entityManager.createQuery(update)
-                .setParameter(likesParameter, 10)
-                .setParameter(topicParameter, "Vicces")
+                //.setParameter("majom", 10)
+                //.setParameter(topicParameter, "Vicces")
                 .executeUpdate();
         
         System.out.println("Updated " + affectedRows + " records");
@@ -73,6 +74,7 @@ class DmlWithCriteriaQueries {
         transaction.rollback();
     }
     
+    @Disabled("https://bugs.eclipse.org/bugs/show_bug.cgi?id=444610")
     @Test
     void updateRelation() {
         // Update posts without author

@@ -1,6 +1,6 @@
 package hu.bearmaster.tutorial.jpa;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -55,11 +55,11 @@ class SimpleCriteriaQueries {
         // SELECT p.title FROM Post p
         
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<String> query = builder.createQuery(String.class);
+        CriteriaQuery<OffsetDateTime> query = builder.createQuery(OffsetDateTime.class);
         Root<Post> post = query.from(Post.class);
         query.select(post.get("createdOn"));
         
-        List<String> titles = entityManager.createQuery(query).getResultList();
+        List<OffsetDateTime> titles = entityManager.createQuery(query).getResultList();
         
         System.out.println(titles.get(0));
     }
