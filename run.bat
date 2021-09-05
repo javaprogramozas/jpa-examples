@@ -1,0 +1,1 @@
+mvn exec:java -Dexec.mainClass="hu.bearmaster.tutorial.jpa.locking.PessimisticLocking" -Dexec.cleanupDaemonThreads=false
