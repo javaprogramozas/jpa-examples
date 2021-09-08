@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -58,7 +59,7 @@ public class User {
     
     @Enumerated(EnumType.STRING)
     private UserStatus status;
-    
+
     @Column(name = "created_at")
     private ZonedDateTime createdAt;
     
@@ -130,7 +131,7 @@ public class User {
     }
 
     public void setPosts(Set<Post> posts) {
-        this.posts = posts;
+        this.posts = new HashSet<>(posts);
     }
     
     public Set<String> getRoles() {

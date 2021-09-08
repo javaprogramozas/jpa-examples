@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,6 +26,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+
+import org.hibernate.annotations.LazyGroup;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 @Entity
 @Table(name = "posts", schema = "blogs")
@@ -61,6 +66,8 @@ public class Post {
 
     private String title;
 
+    @Basic(fetch = FetchType.LAZY)
+    @LazyGroup("desc")
     private String description;
 
     @Column(name = "created_on")
@@ -72,6 +79,7 @@ public class Post {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
     private User author;
 
     private String topic;

@@ -18,7 +18,7 @@ import hu.bearmaster.tutorial.jpa.model.Post;
 import hu.bearmaster.tutorial.jpa.model.User;
 import hu.bearmaster.tutorial.jpa.model.UserStatus;
 
-public class DmlWithCriteriaQueries {
+class DmlWithCriteriaQueries {
     
     private EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("blogs-pu");
     private EntityManager entityManager = entityManagerFactory.createEntityManager();
