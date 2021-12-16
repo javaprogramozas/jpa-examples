@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;

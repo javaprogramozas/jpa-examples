@@ -27,10 +27,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.LazyGroup;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
-
 @Entity
 @Table(name = "posts", schema = "blogs")
 @SequenceGenerator(name = "postIdGenerator", sequenceName = "posts_seq", schema = "blogs", initialValue = 1, allocationSize = 1)
@@ -67,7 +63,6 @@ public class Post {
     private String title;
 
     @Basic(fetch = FetchType.LAZY)
-    @LazyGroup("desc")
     private String description;
 
     @Column(name = "created_on")
@@ -79,7 +74,6 @@ public class Post {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     private User author;
 
     private String topic;

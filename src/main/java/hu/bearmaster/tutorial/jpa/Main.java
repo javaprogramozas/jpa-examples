@@ -20,7 +20,6 @@ public class Main {
         Main main = new Main();
         main.findPost();
     }
-        
     
     private void createPost() {
         Post post = Post.post("Ez egy teszt", "Ide jön a leírás");

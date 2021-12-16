@@ -28,7 +28,6 @@ public class CascadeMain {
         userDao.create(user);
         
         System.out.println("Author: " + post.getAuthor());
-        
     }
     
     private void merge() {
